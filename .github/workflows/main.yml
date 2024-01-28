@@ -11,10 +11,19 @@ jobs:
     # Разворачиваем окружение:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13.10
+        env:
+          POSTGRES_USER: nikolai
+          POSTGRES_PASSWORD: 19Caine89
+          POSTGRES_DB: django
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
-    # Копируем код проекта
-    - name: Check out code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
     # Устанавливаем Python с помощью action
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -30,6 +39,12 @@ jobs:
         pip install -r ./backend/requirements.txt
     # Запускаем flake8
     - name: Test with flake8 and django tests
+      env:
+        POSTGRES_USER: nikolai
+        POSTGRES_PASSWORD: 19Caine89
+        POSTGRES_DB: django
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
       # Вызываем flake8 и указываем ему,
       # что нужно проверить файлы только в папке backend/
       run: |
